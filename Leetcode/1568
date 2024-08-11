@@ -1,0 +1,66 @@
+1568. Minimum Number of Days to Disconnect Island
+
+You are given an m x n binary grid grid where 1 represents land and 0 represents water. An island is a maximal 4-directionally (horizontal or vertical) connected group of 1's.
+
+The grid is said to be connected if we have exactly one island, otherwise is said disconnected.
+
+In one day, we are allowed to change any single land cell (1) into a water cell (0).
+
+Return the minimum number of days to disconnect the grid.
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.
+class Solution {
+    private static final int[] DIRS = new int[] { -1, 0, 1, 0, -1 };
+    private int[][] grid;
+    private int numRows;
+    private int numCols;
+
+    public int minDays(int[][] grid) {
+        this.grid = grid;
+        numRows = grid.length;
+        numCols = grid[0].length;
+        if (countIslands() != 1) {
+            return 0;
+        }
+        for (int i = 0; i < numRows; ++i) {
+            for (int j = 0; j < numCols; ++j) {
+                if (grid[i][j] == 1) {
+                    grid[i][j] = 0;
+                    if (countIslands() != 1) {
+                        return 1; 
+                    }
+                    grid[i][j] = 1;
+                }
+            }
+        }
+        return 2;
+    }
+    private int countIslands() {
+        int count = 0;
+        for (int i = 0; i < numRows; ++i) {
+            for (int j = 0; j < numCols; ++j) {
+                if (grid[i][j] == 1) {
+                    dfs(i, j);
+                    ++count;
+                }
+            }
+        }
+        for (int i = 0; i < numRows; ++i) {
+            for (int j = 0; j < numCols; ++j) {
+                if (grid[i][j] == 2) {
+                    grid[i][j] = 1;
+                }
+            }
+        }
+        return count;
+    }
+    private void dfs(int row, int col) {
+        grid[row][col] = 2; 
+        for (int k = 0; k < 4; ++k) {
+            int newRow = row + DIRS[k], newCol = col + DIRS[k + 1];
+            if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols && grid[newRow][newCol] == 1) {
+                dfs(newRow, newCol); 
+            }
+        }
+    }
+}
